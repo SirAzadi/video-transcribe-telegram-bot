@@ -18,6 +18,17 @@
       "main": [
         [
           {
+            "node": "Extract Video URL & Chat Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Video URL & Chat Info": {
+      "main": [
+        [
+          {
             "node": "Gemini Video Transcribe",
             "type": "main",
             "index": 0
@@ -81,6 +92,42 @@
     },
     {
       "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "videoUrl",
+              "name": "videoUrl",
+              "value": "={{ $json.message?.text || $json.message?.caption || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "chatId",
+              "name": "chatId",
+              "value": "={{ $json.message?.chat?.id }}",
+              "type": "string"
+            },
+            {
+              "id": "messageId",
+              "name": "messageId",
+              "value": "={{ $json.message?.message_id }}",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "id": "extract-url-node",
+      "name": "Extract Video URL & Chat Info",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        112
+      ]
+    },
+    {
+      "parameters": {
         "resource": "video",
         "operation": "analyze",
         "modelId": {
@@ -100,7 +147,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        448,
+        528,
         112
       ]
     },
@@ -115,7 +162,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        672,
+        704,
         112
       ]
     },
@@ -134,7 +181,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        752,
+        784,
         336
       ]
     },
@@ -153,7 +200,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1024,
+        1056,
         112
       ],
       "webhookId": "2941f9f2-c576-486d-81cd-7ea4ff823f10"
