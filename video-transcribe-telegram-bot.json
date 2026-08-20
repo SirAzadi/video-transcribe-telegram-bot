@@ -1,0 +1,191 @@
+{
+  "id": "pza567gswpWujm74",
+  "name": "video-transcribe-telegram-bot",
+  "active": false,
+  "isArchived": false,
+  "versionId": "06ef0c7f-3471-414e-8a74-73bf51507b09",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "createdAt": "2026-08-20T17:42:18.268Z",
+  "updatedAt": "2026-08-20T18:09:47.660Z",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gemini Video Transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Video Transcribe": {
+      "main": [
+        [
+          {
+            "node": "Generate Telegram Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Telegram Post": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Telegram Post",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": false
+        }
+      },
+      "id": "5e60325e-3299-4128-a5ae-fe06bf2cb3bd",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        176,
+        112
+      ],
+      "webhookId": "553d9962-efe1-4203-9f1d-53aaf0ff34d0"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "این ویدیو را کامل ترنسکرایب کن و محتوای کامل آن را به زبان فارسی خلاصه کن. تمام جزئیات مهم، نکات کلیدی، و اطلاعات را استخراج کن.",
+        "videoUrls": "={{ $json.videoUrl }}",
+        "options": {
+          "maxOutputTokens": 8192
+        }
+      },
+      "id": "a377037a-a4a5-45f8-ad4e-2b5531d2439a",
+      "name": "Gemini Video Transcribe",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=از متن ترنسکرایب شده ویدیو زیر، یک پست جذاب، خلاصه و مناسب برای تلگرام بسازید:\n\nترنسکرایب ویدیو:\n{{ $json.text || $json.output || \"\" }}\n\nپست باید:\n1. مختصر و مفید باشد\n2. حاشیه‌نویس‌های جذاب (emoji) داشته باشد\n3. ساختار خوبی داشته باشد (عنوان، بدنه، هشتگ‌ها)\n4. به زبان فارسی باشد\n5. مناسب اشتراک‌گذاری در کانال/گروه تلگرام باشد",
+        "options": {}
+      },
+      "id": "29a2edd5-c304-4d10-8d5a-dbffa92e8325",
+      "name": "Generate Telegram Post",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        672,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "f4583cc4-12b9-40be-9334-7c325ea67db8",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        752,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML",
+          "reply_to_message_id": "={{ $json.messageId }}"
+        }
+      },
+      "id": "d0ef142e-361c-4026-aa66-f15c5c7c9638",
+      "name": "Send Telegram Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        112
+      ],
+      "webhookId": "2941f9f2-c576-486d-81cd-7ea4ff823f10"
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "tags": [],
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
+  },
+  "parentFolderId": null,
+  "scopes": [
+    "execution:reveal",
+    "workflow:create",
+    "workflow:delete",
+    "workflow:disableRedaction",
+    "workflow:enableRedaction",
+    "workflow:execute",
+    "workflow:execute-chat",
+    "workflow:export",
+    "workflow:import",
+    "workflow:list",
+    "workflow:move",
+    "workflow:publish",
+    "workflow:read",
+    "workflow:share",
+    "workflow:unpublish",
+    "workflow:unshare",
+    "workflow:update"
+  ],
+  "canExecute": true
+}
